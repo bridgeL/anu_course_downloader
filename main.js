@@ -92,7 +92,7 @@
             await this.promise_sidebar_open();
             var links = this.get_all_links(course_name);
             console.log(links);
-            if (!confirm(`检测到${links.length}项资源，确定要下载吗？`)) return;
+            if (!confirm(`Detected ${links.length} resources, do you want to proceed with the download?？`)) return;
             for (var link of links) {
                 await this.download_link(link);
             }
