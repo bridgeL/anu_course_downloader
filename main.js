@@ -1,5 +1,5 @@
 class Downloader {
-    promise_sidebar_open = async () => {
+    async promise_sidebar_open() {
         return new Promise((resolve, reject) => {
             var sidebar = document.querySelector("#theme_anu-drawers-courseindex");
             var div = sidebar.querySelectorAll("a.courseindex-link.text-truncate")[0];
@@ -12,7 +12,7 @@ class Downloader {
         })
     }
 
-    get_all_links = (course_name) => {
+    get_all_links(course_name) {
         var sidebar = document.querySelector("#theme_anu-drawers-courseindex");
         var raws = Array.from(sidebar.querySelectorAll("a.courseindex-link.text-truncate"))
             .map(a => {
@@ -49,7 +49,7 @@ class Downloader {
         return links;
     }
 
-    download_link = async (raw) => {
+    async download_link(raw) {
         return new Promise((resolve, reject) => {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', raw.link, true);
@@ -73,7 +73,7 @@ class Downloader {
         })
     }
 
-    start = async (course_name) => {
+    async start(course_name) {
         await this.promise_sidebar_open();
         var links = this.get_all_links(course_name);
         console.log(links);
@@ -86,32 +86,26 @@ class Downloader {
 const downloader = new Downloader();
 
 class GUI {
-    insert_css = (css) => {
+    insert_css(css) {
         var style = document.createElement("style");
         style.innerHTML = css;
         document.body.append(style);
     }
-    init = () => {
-        var btn = document.createElement("button");
-        btn.innerHTML = "点我下载全部";
+
+    init() {
         var course_name = document.querySelector("#page-navbar li:last-child a").title;
-        btn.onclick = async () => {
+        var originalNode = document.querySelector(".secondary-navigation li:nth-child(1)");
+        var clonedNode = originalNode.cloneNode(true);
+        originalNode.parentNode.appendChild(clonedNode);
+
+        var a = clonedNode.querySelector("a");
+        a.innerText = "Download";
+        a.onclick = async (event) => {
+            event.preventDefault();
             await downloader.start(course_name);
-        }
-        btn.className = "anu-course-downloader";
-        this.insert_css(`
-button.anu-course-downloader{
-    position:fixed;
-    top:50vh;
-    left:50vw;
-    font-size:20px;
-}
-        `);
-        document.body.append(btn);
+        };
     }
 }
 
 const gui = new GUI();
 gui.init();
-
-
