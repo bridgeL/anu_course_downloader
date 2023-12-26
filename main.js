@@ -29,9 +29,15 @@
             var sidebar = document.querySelector("#theme_anu-drawers-courseindex");
             var raws = Array.from(sidebar.querySelectorAll("a.courseindex-link.text-truncate"))
                 .map(a => {
+
+                    var link = a.href;
+                    if (link.indexOf("https://wattlecourses.anu.edu.au/mod/resource/") >= 0 && link.indexOf("&redirect=1") < 0) {
+                        link += "&redirect=1";
+                    }
+
                     return {
                         name: course_name + " " + a.innerText,
-                        link: a.href
+                        link: link
                     }
                 });
 
@@ -78,6 +84,12 @@
                 };
 
                 xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 2) {
+                        console.log(xhr.responseURL);
+                        // skip mp4 file since it's too big
+                        if (xhr.responseURL.indexOf(".mp4") >= 0) xhr.abort();
+                    }
+
                     if (xhr.readyState === 4) {
                         console.log(raw.name + " download successful!");
                         setTimeout(resolve, 1000);
